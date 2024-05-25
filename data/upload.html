@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>ESP8266 File Uploader</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <style type="text/css">
+      body{font-family:sans-serif;color: #444;background-color:#ddd;}
+    </style>
+  </head>
+  <body>
+    <h2>ESP LittleFS 'Drag-N-Drop' File Uploader</h2>
+    <form method="POST" enctype="multipart/form-data">
+      <input type="file" name="data" onchange="document.getElementById('auto_submit').click()" >
+      <input id="auto_submit" style="display:none;" type="submit" value="upload">
+    </form>
+  </body>
+</html>
+

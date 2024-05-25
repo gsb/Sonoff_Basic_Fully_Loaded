@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TV Remote Monitor</title>
+    <meta name="monitor" content="width=device-width, initial-scale=1">
+    <meta http-equiv = 'content-type' content = 'text/html; charset = UTF-8'>
+    <link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAAAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAAAAAAAAAAAAAAAAAAAAAAAD///8BAABmPQAAZskAAGbtAABm6wAAZr0AAGYv////Af///wH///8BAABmHwAAZpMAAGbDAABmkQAAZh3///8BAABmPwAAZvkAAGaPAABmJQAAZisAAGahAABm9wAAZjn///8BAABmHwAAZuMAAGbBAABmbwAAZsMAAGbrAABmKQAAZsUAAGaNAABmDwAAZqEAAGaVAABmCQAAZo8AAGbN////AQAAZpEAAGa7AABmEQAAZlEAAGYHAABmpwAAZrkAAGbrAABmLwAAZpsAAGa/AABmwQAAZq0AAGYZAABm7QAAZicAAGanAABmiwAAZicAAGbXAABmkwAAZi8AAGbnAABm4QAAZlMAAGZRAABmZwAAZkUAAGbfAABmEQAAZuUAAGZfAABmUQAAZvEAAGZfAABmuQAAZpsAAGYtAABm6QAAZn0AAGbvAABmQQAAZiUAAGbFAABmqQAAZhcAAGb7AABm1QAAZgsAAGZjAABm2QAAZqcAAGYJAABmmQAAZr////8BAABmhQAAZu0AAGbxAABmtQAAZgsAAGaHAABm/wAAZv8AAGbRAABmOwAAZhMAAGYbAABmlQAAZvUAAGY1////Af///wEAAGYPAABmFf///wEAAGZ9AABm/wAAZq0AAGZ7AABmpwAAZusAAGbtAABm8QAAZs0AAGY3////Af///wH///8B////Af///wEAAGZjAABm9QAAZjkAAGYPAABmSQAAZiEAAGYJAABmMQAAZiMAAGYD////Af///wH///8B////Af///wEAAGYDAABm2wAAZmcAAGYvAABm7QAAZt8AAGb5AABmdf///wH///8B////Af///wH///8B////Af///wH///8BAABmIQAAZusAAGYfAABmuwAAZof///8BAABmSQAAZvMAAGYx////Af///wH///8B////Af///wH///8B////AQAAZh0AAGbrAABmJQAAZqMAAGa7AABmuwAAZhkAAGbPAABmZf///wH///8B////Af///wH///8B////Af///wH///8BAABmyQAAZo8AAGYNAABmnQAAZm8AAGYXAABm6wAAZkf///8B////Af///wH///8B////Af///wH///8B////AQAAZj0AAGb3AABmlwAAZicAAGY7AABm1QAAZrv///8B////Af///wH///8B////Af///wH///8B////Af///wH///8BAABmNwAAZsUAAGbvAABm6wAAZpsAAGYP////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8BAAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//w==" />
+
+    <style>
+      *{box-sizing:border-box;}:focus{outline:none;}
+      body{overflow-y:hidden;}
+      input{font-size:18px;width:calc(99vw - 6px);height:35px;padding:5px;align-self:center;}
+      textarea{resize:none;border:none;width:calc(99vw - 6px);height:calc(99vh - 46px);padding:10px;align-self:center;}
+    </style>
+
+    <script>
+      window.$=document.querySelector.bind(document);
+      $.offline=function(){$.isOnline=false;}
+      $.scroll2bottom=function(){setTimeout(function(){$.textarea.scrollTop=$.textarea.scrollHeight-50},0);}
+      $.addMessage=function(n){$.textarea.value += n;if($.scrollingEnabled)$.scroll2bottom();}
+      $.wsInit=function(){
+        $.ws=new WebSocket('ws://'+window.location.host+'/ws');
+        $.ws.onopen=function(n){ $.isOnline=true; }
+        $.ws.onclose=function(n){$.isOnline=false;setTimeout(window.location.reload(),1e3);}
+        $.ws.onmessage=function(n){
+          if ('string' == typeof n.data){
+            $.comFailures=0;$.isOnline=true;
+            if (n.data != "pong" && !n.data.includes("<apps>")) {
+              $.addMessage(n.data);
+            }
+          }
+        }
+      }
+      $.comCheck=function(){
+        if($.isOnline && $.comFailures++>3){$.isOnline=false;$.ws.send('ping');} //console.log(">> ping");}
+        setTimeout($.comCheck,2e3);
+      }
+      window.onload=function(){
+        $.isOnline=false;$.comFailures=0;$.scrollingEnabled=1;$.input=$('input');$.textarea=$('textarea');
+        $.textarea.onclick=function(e){
+          if(e.altKey){
+            $.scrollingEnabled=!$.scrollingEnabled;
+            console.log('scrolling '+($.scrollingEnabled?'on':'off'));
+          }
+        }
+        $.wsInit();$.comCheck();$.textarea.innerHTML='';
+        $.input.onkeydown=function(n){
+          if (13 == n.keyCode){
+            switch ($.input.value){
+              case "":$.textarea.value=''; break;
+              default:console.log('>> '+$.input.value);$.ws.send($.input.value);break;
+            }
+            $.input.value='';
+          }
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div>
+      <label><input name="CommandLine" type = 'text'/></label>
+      <textarea name="WebMonitor" onClick = ''></textarea>
+    </div>
+  </body>
+</html>
