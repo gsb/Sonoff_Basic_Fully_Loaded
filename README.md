@@ -1,6 +1,6 @@
 # Basic Sonoff Fully Loaded
 
-PlatformIO personal home project distilled here into a general example
+PlatformIO personal home project distilled here into a general example.
 
 ## Includes:
 	- Web monitor page w/ user control - WebSocket connection
